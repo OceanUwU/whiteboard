@@ -58,28 +58,30 @@ public class Drawing implements PreUpdateSubscriber {
     }
 
     public void receivePreUpdate() {
-        if (InputHelper.justClickedRight)
-            Pixmap.setBlending(Pixmap.Blending.None);
-        if (WhiteboardMod.open && InputHelper.isMouseDown_R) {
-            InputHelper.isMouseDown_R = false;
-            InputHelper.justClickedRight = false;
-            Vector2 pos = new Vector2(InputHelper.mX, Settings.HEIGHT - InputHelper.mY);
-            if (lastPos == null) {
-                draw(pos);
-                updateTexture();
-                texture = new Texture(pixmap);
-            } else if (!pos.equals(lastPos)) {
-                float step = size / (16.0f * pos.dst(lastPos));
-                for (float a = 0; a < 1f; a += step)
-                    draw(pos.lerp(lastPos, a));
-                updateTexture();
+        if (WhiteboardMod.open) {
+            if (InputHelper.justClickedRight)
+                Pixmap.setBlending(Pixmap.Blending.None);
+            if (InputHelper.isMouseDown_R) {
+                InputHelper.isMouseDown_R = false;
+                InputHelper.justClickedRight = false;
+                Vector2 pos = new Vector2(InputHelper.mX, Settings.HEIGHT - InputHelper.mY);
+                if (lastPos == null) {
+                    draw(pos);
+                    updateTexture();
+                    texture = new Texture(pixmap);
+                } else if (!pos.equals(lastPos)) {
+                    float step = size / (16.0f * pos.dst(lastPos));
+                    for (float a = 0; a < 1f; a += step)
+                        draw(pos.lerp(lastPos, a));
+                    updateTexture();
+                }
+                lastPos = new Vector2(InputHelper.mX, Settings.HEIGHT - InputHelper.mY);
+            } else if (InputHelper.justReleasedClickRight) {
+                lastPos = null;
+                Pixmap.setBlending(Pixmap.Blending.SourceOver);
+                savePixmap();
             }
-            lastPos = new Vector2(InputHelper.mX, Settings.HEIGHT - InputHelper.mY);
-        } else if (InputHelper.justReleasedClickRight) {
-            lastPos = null;
-            Pixmap.setBlending(Pixmap.Blending.SourceOver);
-            savePixmap();
-        }
+        }   
     }
 
     public void render(SpriteBatch sb) {
