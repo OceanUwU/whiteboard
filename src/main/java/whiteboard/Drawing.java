@@ -68,7 +68,9 @@ public class Drawing implements PreUpdateSubscriber {
     }
 
     public void render(SpriteBatch sb) {
-        if (WhiteboardMod.open)
+        if (WhiteboardMod.open) {
+            sb.setColor(Color.WHITE);
             sb.draw(texture, 0, 0);
+        }
     }
 }
