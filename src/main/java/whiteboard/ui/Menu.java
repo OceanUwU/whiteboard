@@ -77,7 +77,8 @@ public class Menu {
     private void nextColor() throws IOException {
         colorIndex = ++colorIndex % colors.length;
         color = colors[colorIndex];
-        WhiteboardMod.drawing.setColor(color);
+        if (!erasing)
+            WhiteboardMod.drawing.setColor(color);
         WhiteboardMod.config.setInt("color", colorIndex);
         WhiteboardMod.config.save();
     }

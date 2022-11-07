@@ -1,9 +1,6 @@
 package whiteboard.ui;
 
 import basemod.TopPanelItem;
-
-import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter.White;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import whiteboard.WhiteboardMod;
