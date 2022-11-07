@@ -1,17 +1,20 @@
 package whiteboard;
 
 import basemod.interfaces.PreUpdateSubscriber;
-
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 
 public class Drawing implements PreUpdateSubscriber {
+    private static FileHandle saveHandle = new FileHandle(SpireConfig.makeFilePath(WhiteboardMod.ID, "drawing", "cim"));
+
     public Color color;
     public int size = 0;
     private Pixmap pixmap;
@@ -20,6 +23,11 @@ public class Drawing implements PreUpdateSubscriber {
 
     public Drawing() {
         pixmap = new Pixmap(Settings.WIDTH, Settings.HEIGHT, Pixmap.Format.RGBA8888);
+        if (saveHandle.exists()) {
+            Pixmap prevPixmap = PixmapIO.readCIM(saveHandle);
+            pixmap.drawPixmap(prevPixmap, 0, 0);
+            prevPixmap.dispose();
+        }
         texture = new Texture(pixmap);
     }
 
@@ -33,6 +41,7 @@ public class Drawing implements PreUpdateSubscriber {
 		pixmap.fill();
 		pixmap.setColor(color);
         updateTexture();
+        savePixmap();
 	}
 
     private void draw(Vector2 dot) {
@@ -40,7 +49,12 @@ public class Drawing implements PreUpdateSubscriber {
     }
 
     private void updateTexture() {
+        texture.dispose();
         texture = new Texture(pixmap);
+    }
+
+    private void savePixmap() {
+        PixmapIO.writeCIM(saveHandle, pixmap);
     }
 
     public void receivePreUpdate() {
@@ -64,6 +78,7 @@ public class Drawing implements PreUpdateSubscriber {
         } else if (InputHelper.justReleasedClickRight) {
             lastPos = null;
             Pixmap.setBlending(Pixmap.Blending.SourceOver);
+            savePixmap();
         }
     }
 
