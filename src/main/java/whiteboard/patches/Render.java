@@ -6,8 +6,9 @@ import com.megacrit.cardcrawl.ui.panels.TopPanel;
 import whiteboard.WhiteboardMod;
 
 @SpirePatch(clz=TopPanel.class, method="render")
-public class RenderDrawing {
+public class Render {
     public static void Prefix(TopPanel __instance, SpriteBatch sb) {
         WhiteboardMod.drawing.render(sb);
+        WhiteboardMod.menu.render(sb);
     }
 }

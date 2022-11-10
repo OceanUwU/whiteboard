@@ -8,7 +8,7 @@ import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 
 public abstract class Button implements PreUpdateSubscriber {
-    private static int width = 64, height = 64;
+    public static int width = 64, height = 64;
 
     public Texture texture;
     public Hitbox hb;

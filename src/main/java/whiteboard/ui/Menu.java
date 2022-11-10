@@ -1,15 +1,16 @@
 package whiteboard.ui;
 
-import basemod.ReflectionHacks;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.megacrit.cardcrawl.helpers.TipHelper;
 import whiteboard.WhiteboardMod;
 
 import java.io.IOException;
 
 public class Menu {
+    private static Texture background = new Texture("whiteboard/menu.png");
     private static int Y_BELOW_TOP = 40;
+    private static int PADDING = 20;
     private static Color[] colors = {
         new Color(1.00f, 0.16f, 0.16f, 1), //red
         new Color(1.00f, 1.00f, 0.00f, 1), //yellow
@@ -17,8 +18,9 @@ public class Menu {
         new Color(0.05f, 1.00f, 0.15f, 1), //green
         new Color(0.96f, 0.26f, 0.81f, 1), //pink
         new Color(1.00f, 0.65f, 0.22f, 1), //orange
-        new Color(1.00f, 1.00f, 1.00f, 1), //white
-        new Color(0.00f, 0.00f, 0.00f, 1), //black
+        new Color(0.41f, 0.24f, 0.79f, 1), //purple
+        new Color(0.90f, 0.90f, 0.90f, 1), //white
+        new Color(0.10f, 0.10f, 0.10f, 1), //black
     };
     private static int[] sizes = {1, 2, 4, 6};
 
@@ -57,10 +59,10 @@ public class Menu {
     }
 
     public void move(float newX, float newY) {
-        x = newX - (float)ReflectionHacks.getPrivateStatic(TipHelper.class, "BOX_W") * 0.5f;
-        y = newY - Y_BELOW_TOP;
-        float btnX = x+28;
-        float btnY = y-44;
+        x = newX - background.getWidth() * 0.5f;
+        y = newY - Y_BELOW_TOP - background.getHeight();
+        float btnX = x+PADDING;
+        float btnY = y+PADDING;
         penTypeButton.move(btnX, btnY);
         colorButton.move(btnX+64, btnY);
         sizeButton.move(btnX+128, btnY);
@@ -95,19 +97,13 @@ public class Menu {
         WhiteboardMod.drawing.clear();
     }
 
-    public void renderTip(SpriteBatch sb) {
+    public void render(SpriteBatch sb) {
         if (WhiteboardMod.open) {
-            ReflectionHacks.setPrivateStatic(TipHelper.class, "renderedTipThisFrame", false);
-            TipHelper.renderGenericTip(x, y, "", "");
-        }
-    }
-
-    public void renderButtons(SpriteBatch sb) {
-        if (WhiteboardMod.open) {
-            penTypeButton.render(sb);
             sb.setColor(color);
+            sb.draw(background, x, y);
             colorButton.render(sb);
             sb.setColor(Color.WHITE);
+            penTypeButton.render(sb);
             sizeButton.render(sb);
             clearButton.render(sb);
         }
