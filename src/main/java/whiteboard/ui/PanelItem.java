@@ -18,12 +18,16 @@ public class PanelItem extends TopPanelItem {
         super.render(sb, WhiteboardMod.menu.color);
     }
 
-    @Override
-    protected void onClick() {
-        WhiteboardMod.open = !WhiteboardMod.open;
+    public void correctMenuVisibility() {
         if (WhiteboardMod.open)
             WhiteboardMod.menu.move(this.x + (hb_w / 2), this.y);
         else
             WhiteboardMod.menu.move(-1000, -1000);
+    }
+
+    @Override
+    protected void onClick() {
+        WhiteboardMod.open = !WhiteboardMod.open;
+        correctMenuVisibility();
     }
 }

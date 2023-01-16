@@ -1,6 +1,7 @@
 package whiteboard;
 
 import basemod.interfaces.PreUpdateSubscriber;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,9 +18,14 @@ public class Drawing implements PreUpdateSubscriber {
 
     public Color color;
     public int size = 0;
+    public boolean middle = WhiteboardMod.config.getBool("middle");
     private Pixmap pixmap;
     private Texture texture;
     private Vector2 lastPos;
+    private boolean mouseMiddle = false;
+    private boolean justMouseMiddle = false;
+    private boolean prevMouseMiddle = false;
+    private boolean releasedMouseMiddle = false;
 
     public Drawing() {
         pixmap = new Pixmap(Settings.WIDTH, Settings.HEIGHT, Pixmap.Format.RGBA8888);
@@ -58,12 +64,24 @@ public class Drawing implements PreUpdateSubscriber {
     }
 
     public void receivePreUpdate() {
+        if (middle) {
+            mouseMiddle = Gdx.input.isButtonPressed(2);
+            justMouseMiddle = mouseMiddle && !prevMouseMiddle;
+            releasedMouseMiddle = !mouseMiddle && prevMouseMiddle;
+            prevMouseMiddle = mouseMiddle;
+            if (justMouseMiddle && !WhiteboardMod.open) {
+                WhiteboardMod.open = true;
+                WhiteboardMod.panelItem.correctMenuVisibility();
+            }
+        }
         if (WhiteboardMod.open) {
-            if (InputHelper.justClickedRight)
+            if ((middle && justMouseMiddle) || (!middle && InputHelper.justClickedRight))
                 Pixmap.setBlending(Pixmap.Blending.None);
-            if (InputHelper.isMouseDown_R) {
-                InputHelper.isMouseDown_R = false;
-                InputHelper.justClickedRight = false;
+            if ((middle && mouseMiddle) || (!middle && InputHelper.isMouseDown_R)) {
+                if (!middle) {
+                    InputHelper.isMouseDown_R = false;
+                    InputHelper.justClickedRight = false;
+                }
                 Vector2 pos = new Vector2(InputHelper.mX, Settings.HEIGHT - InputHelper.mY);
                 if (lastPos == null) {
                     draw(pos);
@@ -76,7 +94,7 @@ public class Drawing implements PreUpdateSubscriber {
                     updateTexture();
                 }
                 lastPos = new Vector2(InputHelper.mX, Settings.HEIGHT - InputHelper.mY);
-            } else if (InputHelper.justReleasedClickRight) {
+            } else if ((middle && releasedMouseMiddle) || (!middle && InputHelper.justReleasedClickRight)) {
                 lastPos = null;
                 Pixmap.setBlending(Pixmap.Blending.SourceOver);
             }
