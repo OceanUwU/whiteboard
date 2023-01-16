@@ -43,6 +43,7 @@ public class WhiteboardMod implements PostInitializeSubscriber {
     public static class MainMenuPatch {
         public static void Postfix() {
             open = false;
+            drawing.savePixmap();
         }
     }
 }

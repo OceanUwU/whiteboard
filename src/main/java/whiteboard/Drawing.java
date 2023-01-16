@@ -53,7 +53,7 @@ public class Drawing implements PreUpdateSubscriber {
         texture = new Texture(pixmap);
     }
 
-    private void savePixmap() {
+    public void savePixmap() {
         PixmapIO.writeCIM(saveHandle, pixmap);
     }
 
@@ -79,7 +79,6 @@ public class Drawing implements PreUpdateSubscriber {
             } else if (InputHelper.justReleasedClickRight) {
                 lastPos = null;
                 Pixmap.setBlending(Pixmap.Blending.SourceOver);
-                savePixmap();
             }
         }   
     }
